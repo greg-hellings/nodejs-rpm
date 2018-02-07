@@ -9,3 +9,5 @@ Session.vim
 
 # Distribution / packaging
 dist/
+*.tar.gz
+*.src.rpm
