@@ -3,7 +3,6 @@
 %define   _bindir %{_prefix}/bin
 %define   _libdir %{_prefix}/lib
 %define   _node_original_docdir /usr/share/doc/node
-%define   _build_number %(echo ${BUILD_NUMBER:-1})
 
 %if 0%{?rhel} == 5
 %define   _datarootdir%{_datadir}
@@ -14,11 +13,11 @@
 
 Name:          %{_base}js6
 Version:       6.12.3
-Release:       %{_build_number}%{?dist}
+Release:       2%{?dist}
 Provides:      %{_base}js(engine)
+Provides:      %{_base}js
 Summary:       Node.js is a server-side JavaScript environment that uses an asynchronous event-driven model.
 Packager:      Kazuhisa Hara <kazuhisya@gmail.com>
-Group:         Development/Libraries
 License:       MIT License
 URL:           https://nodejs.org
 Source0:       %{url}/dist/v%{version}/%{_base}-v%{version}.tar.gz
@@ -40,8 +39,6 @@ BuildRequires: python
 %{?el7:BuildRequires: libicu-devel}
 %{?fedora:Requires: libicu}
 %{?fedora:BuildRequires: libicu-devel}
-%{?suse_version:Requires: libicu}
-%{?suse_version:BuildRequires: libicu-devel}
 
 Patch0: node-js.centos5.configure.patch
 Patch1: node-js.centos5.gyp.patch
@@ -56,7 +53,6 @@ This allows Node.js to get excellent performance based on the architectures of m
 
 %package binary
 Summary:       Node.js build binary tarballs
-Group:         Development/Libraries
 License:       MIT License
 URL:           http://nodejs.org
 
@@ -66,12 +62,11 @@ This allows Node.js to get excellent performance based on the architectures of m
 
 %package npm
 Summary:       Node Packaged Modules
-Group:         Development/Libraries
 License:       MIT License
 URL:           http://nodejs.org
 Obsoletes:     npm
 Provides:      npm
-Requires:      nodejs
+Requires:      %{name}
 
 %description npm
 Node.js is a server-side JavaScript environment that uses an asynchronous event-driven model.
@@ -79,7 +74,6 @@ This allows Node.js to get excellent performance based on the architectures of m
 
 %package devel
 Summary:       Header files for %{name}
-Group:         Development/Libraries
 Requires:      %{name}
 
 %description devel
@@ -197,6 +191,12 @@ rm -rf $RPM_SOURCE_DIR/%{_base}-v%{version}-linux-%{_node_arch}
 %{tapsetroot}
 
 %changelog
+* Wed Feb  7 2018 Greg Hellings <greg.hellings@gmail.com> - 6.12.3-2
+- Removed extraneous fields from spec file
+- Removed unneeded macros from spec file
+- Set devel to depend on %%{name} intead of "nodejs"
+- Added Provides nodejs to main package
+
 * Fri Jan  5 2018 Kazuhisa Hara <kazuhisya@gmail.com> - 6.12.3-1
 - Updated to node.js version 6.12.3
 * Wed Dec 13 2017 Kazuhisa Hara <kazuhisya@gmail.com> - 6.12.2-1
