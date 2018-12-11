@@ -12,15 +12,15 @@
 %global tapsetdir %{tapsetroot}/tapset/%{_build_cpu}
 
 Name:          %{_base}js6
-Version:       6.12.3
-Release:       2%{?dist}
+Version:       6.15.1
+Release:       1%{?dist}
 Provides:      %{_base}js(engine)
 Provides:      %{_base}js
 Summary:       Node.js is a server-side JavaScript environment that uses an asynchronous event-driven model.
 Packager:      Kazuhisa Hara <kazuhisya@gmail.com>
 License:       MIT License
 URL:           https://nodejs.org
-Source0:       %{url}/dist/v%{version}/%{_base}-v%{version}.tar.gz
+Source0:       %{url}/dist/v%{version}/%{_base}-v%{version}.tar.xz
 BuildRoot:     %{_tmppath}/%{name}-%{version}-%{release}-tmp
 Prefix:        /usr
 BuildRequires: tar
@@ -31,7 +31,8 @@ BuildRequires: openssl-devel
 BuildRequires: libstdc++-devel
 BuildRequires: zlib-devel
 BuildRequires: gzip
-BuildRequires: python
+BuildRequires: python2
+Requires:      python2
 
 %{?el5:BuildRequires: python27}
 %{?el5:BuildRequires: redhat-rpm-config}
@@ -159,9 +160,10 @@ for dir in *; do
 done
 popd
 
-%clean
-rm -rf $RPM_BUILD_ROOT
-rm -rf $RPM_SOURCE_DIR/%{_base}-v%{version}-linux-%{_node_arch}
+# Mangle python shebang lines
+for x in $(find "%{buildroot}" -type f); do
+    sed -i -e 's|^#!/usr/bin/env python$|#!/usr/bin/python2|' -e 's|^#!/usr/bin/python$|#!/usr/bin/python2|' "${x}"
+done
 
 %files
 %defattr(-,root,root,-)
@@ -191,6 +193,10 @@ rm -rf $RPM_SOURCE_DIR/%{_base}-v%{version}-linux-%{_node_arch}
 %{tapsetroot}
 
 %changelog
+* Tue Dec 11 2018 Greg Hellings <greg.hellings@gmail.com> - 6.15.1-1
+- Upstream version 6.15.1
+- Update python shebang files
+
 * Wed Feb  7 2018 Greg Hellings <greg.hellings@gmail.com> - 6.12.3-2
 - Removed extraneous fields from spec file
 - Removed unneeded macros from spec file
