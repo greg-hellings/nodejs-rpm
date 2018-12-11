@@ -13,7 +13,7 @@
 %global tapsetdir %{tapsetroot}/tapset/%{_build_cpu}
 
 Name:          %{_base}js8
-Version:       8.9.4
+Version:       8.14.0
 Release:       %{_build_number}%{?dist}
 Provides:      %{_base}js(engine)
 Summary:       Node.js is a server-side JavaScript environment that uses an asynchronous event-driven model.
@@ -21,7 +21,7 @@ Packager:      Kazuhisa Hara <kazuhisya@gmail.com>
 Group:         Development/Libraries
 License:       MIT License
 URL:           https://nodejs.org
-Source0:       %{url}/dist/v%{version}/%{_base}-v%{version}.tar.gz
+Source0:       %{url}/dist/v%{version}/%{_base}-v%{version}.tar.xz
 BuildRoot:     %{_tmppath}/%{name}-%{version}-%{release}-tmp
 Prefix:        /usr
 BuildRequires: tar
@@ -32,7 +32,8 @@ BuildRequires: openssl-devel
 BuildRequires: libstdc++-devel
 BuildRequires: zlib-devel
 BuildRequires: gzip
-BuildRequires: python
+BuildRequires: python2
+Requires:      python2
 
 %{?el5:BuildRequires: python27}
 %{?el5:BuildRequires: redhat-rpm-config}
@@ -150,9 +151,10 @@ for dir in *; do
 done
 popd
 
-%clean
-rm -rf $RPM_BUILD_ROOT
-rm -rf $RPM_SOURCE_DIR/%{_base}-v%{version}-linux-%{_node_arch}
+# Mangle python shebang lines
+for x in $(find "%{buildroot}" -type f); do
+    sed -i -e 's|^#!/usr/bin/env python$|#!/usr/bin/python2|' -e 's|^#!/usr/bin/python$|#!/usr/bin/python2|' "${x}"
+done
 
 %files
 %defattr(-,root,root,-)
@@ -183,6 +185,10 @@ rm -rf $RPM_SOURCE_DIR/%{_base}-v%{version}-linux-%{_node_arch}
 %{tapsetroot}
 
 %changelog
+* Tue Dec 11 2018 Greg Hellings <greg.hellings@gmail.com> - 8.14.0-1
+- Version 8.14.0
+- Add shebang mangling for python2
+
 * Fri Jan  5 2018 Kazuhisa Hara <kazuhisya@gmail.com> - 8.9.4-1
 - updated to node.js version 8.9.4
 * Wed Dec 13 2017 Kazuhisa Hara <kazuhisya@gmail.com> - 8.9.3-1

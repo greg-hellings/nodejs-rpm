@@ -12,7 +12,7 @@ ifeq "$(PYVERSION_270)" "1"
 ifeq "$(GCCVERSION_480)" "1"
 	spectool -g  $(NAME).spec
 	mkdir -p dist/{BUILD,RPMS,SPECS,SOURCES,SRPMS,install}
-	mv $(BASE)-v*.tar.gz dist/SOURCES/
+	mv $(BASE)-v*.tar.xz dist/SOURCES/
 	cp -pf *.patch dist/SOURCES/
 	rpmbuild -ba \
 		--define "_topdir $(PWD)/dist" \
@@ -22,7 +22,7 @@ ifeq "$(GCCVERSION_480)" "1"
 else ifeq "$(GCCVERSION_700)" "1"
 	spectool -g  $(NAME).spec
 	mkdir -p dist/{BUILD,RPMS,SPECS,SOURCES,SRPMS,install}
-	mv $(BASE)-v*.tar.gz dist/SOURCES/
+	mv $(BASE)-v*.tar.xz dist/SOURCES/
 	cp -pf *.patch dist/SOURCES/
 	rpmbuild -ba \
 		--define "_topdir $(PWD)/dist" \
