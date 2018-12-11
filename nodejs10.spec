@@ -12,8 +12,8 @@
 %global tapsetroot %{_prefix}/share/systemtap
 %global tapsetdir %{tapsetroot}/tapset/%{_build_cpu}
 
-Name:          %{_base}js
-Version:       9.5.0
+Name:          %{_base}js10
+Version:       10.14.1
 Release:       %{_build_number}%{?dist}
 Provides:      %{_base}js(engine)
 Summary:       Node.js is a server-side JavaScript environment that uses an asynchronous event-driven model.
@@ -21,7 +21,7 @@ Packager:      Kazuhisa Hara <kazuhisya@gmail.com>
 Group:         Development/Libraries
 License:       MIT License
 URL:           https://nodejs.org
-Source0:       %{url}/dist/v%{version}/%{_base}-v%{version}.tar.gz
+Source0:       %{url}/dist/v%{version}/%{_base}-v%{version}.tar.xz
 BuildRoot:     %{_tmppath}/%{name}-%{version}-%{release}-tmp
 Prefix:        /usr
 BuildRequires: tar
@@ -32,7 +32,8 @@ BuildRequires: openssl-devel
 BuildRequires: libstdc++-devel
 BuildRequires: zlib-devel
 BuildRequires: gzip
-BuildRequires: python
+BuildRequires: python2
+Requires:      python2
 
 %{?el5:BuildRequires: python27}
 %{?el5:BuildRequires: redhat-rpm-config}
@@ -150,9 +151,10 @@ for dir in *; do
 done
 popd
 
-%clean
-rm -rf $RPM_BUILD_ROOT
-rm -rf $RPM_SOURCE_DIR/%{_base}-v%{version}-linux-%{_node_arch}
+# Mangle python shebang lines
+for x in $(find "%{buildroot}" -type f); do
+    sed -i -e 's|^#!/usr/bin/env python$|#!/usr/bin/python2|' -e 's|^#!/usr/bin/python$|#!/usr/bin/python2|' "${x}"
+done
 
 %files
 %defattr(-,root,root,-)
@@ -183,6 +185,10 @@ rm -rf $RPM_SOURCE_DIR/%{_base}-v%{version}-linux-%{_node_arch}
 %{tapsetroot}
 
 %changelog
+* Tue Dec 11 2018 Greg Hellings <greg.hellings@gmail.com> - 10.14.1-1
+- Upstream version 10.14.1
+- Created new LTS branch
+
 * Thu Feb  1 2018 Kazuhisa Hara <kazuhisya@gmail.com> - 9.5.0-1
 - updated to node.js version 9.5.0
 * Thu Jan 11 2018 Kazuhisa Hara <kazuhisya@gmail.com> - 9.4.0-1
